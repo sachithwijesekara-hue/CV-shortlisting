@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Shortlist Pro — Recruitment Intelligence</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<!-- PDF.js for PDF reading -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- XLSX for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg2: #0f1525;
+  --card: #141b2d;
+  --card2: #1a2338;
+  --border: #1e2d4a;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --glow: 0 0 20px rgba(0,212,255,0.15);
+  --glow2: 0 0 20px rgba(124,58,237,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* Background grid */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+.main-wrap { position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+.app-header {
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1a2e 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(10px);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff;
+  box-shadow: var(--glow);
+}
+.brand-name { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; }
+.brand-name span { color: var(--accent); }
+.brand-sub { font-size: 0.7rem; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+.header-stats { display: flex; gap: 20px; }
+.hstat { text-align: center; }
+.hstat-val { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+.hstat-lbl { font-size: 0.65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── NAV TABS ── */
+.nav-pills-custom { display: flex; gap: 6px; padding: 16px 32px 0; overflow-x: auto; }
+.nav-pills-custom .nav-link {
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px 8px 0 0;
+  padding: 10px 20px; font-size: 0.82rem; font-weight: 500;
+  white-space: nowrap; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 7px;
+}
+.nav-pills-custom .nav-link:hover { color: var(--accent); border-color: var(--accent); }
+.nav-pills-custom .nav-link.active {
+  background: var(--card2); color: var(--accent);
+  border-color: var(--accent); border-bottom-color: var(--card2);
+}
+.tab-content-area { padding: 0 32px 32px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── CARDS ── */
+.panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px;
+  margin-bottom: 20px;
+}
+.panel-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+.panel-icon { color: var(--accent); font-size: 1rem; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 40px; text-align: center;
+  transition: all 0.3s; cursor: pointer; position: relative;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.04);
+  box-shadow: var(--glow);
+}
+.upload-zone input[type="file"] { display: none; }
+.upload-icon { font-size: 2.5rem; color: var(--accent); margin-bottom: 12px; }
+.upload-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+.upload-sub { color: var(--text3); font-size: 0.82rem; }
+
+/* ── FILE LIST ── */
+.file-list { margin-top: 16px; }
+.file-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 6px;
+  font-size: 0.82rem;
+}
+.file-item-icon { color: var(--accent); width: 20px; text-align: center; }
+.file-item-name { flex: 1; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-item-size { color: var(--text3); font-size: 0.75rem; white-space: nowrap; }
+.file-item-status { font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; }
+.status-pending { background: rgba(245,158,11,0.15); color: var(--warn); }
+.status-done { background: rgba(16,185,129,0.15); color: var(--accent3); }
+.status-error { background: rgba(239,68,68,0.15); color: var(--danger); }
+.file-remove { background: none; border: none; color: var(--text3); cursor: pointer; padding: 2px 6px; }
+.file-remove:hover { color: var(--danger); }
+
+/* ── KEYWORD TAGS ── */
+.tag-input-wrap {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 12px;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  min-height: 46px;
+}
+.tag-input-wrap input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 0.85rem; flex: 1; min-width: 120px;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500;
+}
+.tag-kw { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+.tag-jd { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+.tag-remove { cursor: pointer; opacity: 0.6; }
+.tag-remove:hover { opacity: 1; }
+
+/* ── FORM CONTROLS ── */
+.form-control-dark {
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--text); border-radius: 8px; padding: 10px 14px;
+  font-size: 0.85rem; width: 100%;
+  transition: border-color 0.2s;
+}
+.form-control-dark:focus { outline: none; border-color: var(--accent); box-shadow: var(--glow); }
+.form-control-dark option { background: var(--card2); }
+textarea.form-control-dark { resize: vertical; min-height: 80px; }
+
+/* ── BUTTONS ── */
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent), #0099cc);
+  color: #000; font-weight: 700; border: none; border-radius: 8px;
+  padding: 10px 22px; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-accent:hover { transform: translateY(-1px); box-shadow: var(--glow); }
+.btn-accent:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-purple {
+  background: linear-gradient(135deg, var(--accent2), #6d28d9);
+  color: #fff; font-weight: 700; border: none; border-radius: 8px;
+  padding: 10px 22px; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-purple:hover { transform: translateY(-1px); box-shadow: var(--glow2); }
+.btn-green {
+  background: linear-gradient(135deg, var(--accent3), #059669);
+  color: #fff; font-weight: 700; border: none; border-radius: 8px;
+  padding: 10px 22px; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-outline {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px;
+  padding: 9px 18px; font-size: 0.82rem; cursor: pointer;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm-icon {
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 6px;
+  padding: 5px 10px; font-size: 0.75rem; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-sm-icon:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── PROGRESS ── */
+.progress-wrap { background: var(--card2); border-radius: 6px; height: 6px; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.4s ease;
+}
+
+/* ── SCORE BADGE ── */
+.score-badge {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800;
+  flex-shrink: 0;
+}
+.score-high { background: rgba(16,185,129,0.2); color: var(--accent3); border: 2px solid var(--accent3); }
+.score-mid { background: rgba(245,158,11,0.2); color: var(--warn); border: 2px solid var(--warn); }
+.score-low { background: rgba(239,68,68,0.2); color: var(--danger); border: 2px solid var(--danger); }
+
+/* ── RANKING TABLE ── */
+.rank-table { width: 100%; border-collapse: collapse; }
+.rank-table th {
+  background: var(--card2); color: var(--text3);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+  padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+}
+.rank-table td { padding: 12px 14px; border-bottom: 1px solid rgba(30,45,74,0.5); font-size: 0.83rem; vertical-align: middle; }
+.rank-table tr:hover td { background: rgba(0,212,255,0.03); }
+.rank-num {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  color: var(--text3); font-size: 0.9rem; width: 36px; text-align: center;
+}
+.rank-1 .rank-num { color: #fbbf24; }
+.rank-2 .rank-num { color: #94a3b8; }
+.rank-3 .rank-num { color: #b45309; }
+.match-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.match-pill {
+  font-size: 0.68rem; padding: 2px 7px; border-radius: 10px;
+  background: rgba(0,212,255,0.1); color: var(--accent);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+.match-pill.miss { background: rgba(100,116,139,0.1); color: var(--text3); border-color: rgba(100,116,139,0.2); }
+
+/* ── CANDIDATE DETAIL MODAL ── */
+.modal-dark { background: rgba(0,0,0,0.85) !important; }
+.modal-dark .modal-content {
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--text); border-radius: 14px;
+}
+.modal-dark .modal-header { border-bottom: 1px solid var(--border); }
+.modal-dark .modal-footer { border-top: 1px solid var(--border); }
+.modal-dark .btn-close { filter: invert(1); }
+.info-row { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.info-chip {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 14px; font-size: 0.8rem;
+}
+.info-chip i { color: var(--accent); font-size: 0.85rem; }
+
+/* ── REPORT CARDS ── */
+.report-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; gap: 10px;
+  text-align: center;
+}
+.report-card:hover { border-color: var(--accent); box-shadow: var(--glow); transform: translateY(-2px); }
+.report-icon { font-size: 2rem; margin-bottom: 6px; }
+.report-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
+.report-desc { color: var(--text3); font-size: 0.75rem; }
+
+/* ── ALERT ── */
+.alert-dark {
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+  color: var(--warn); border-radius: 8px; padding: 12px 16px;
+  font-size: 0.82rem; display: flex; align-items: center; gap: 8px;
+}
+.alert-info {
+  background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
+  color: var(--accent); border-radius: 8px; padding: 12px 16px;
+  font-size: 0.82rem;
+}
+.alert-success {
+  background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2);
+  color: var(--accent3); border-radius: 8px; padding: 12px 16px;
+  font-size: 0.82rem;
+}
+
+/* ── PROCESSING LOG ── */
+.process-log {
+  background: #060a14; border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; font-size: 0.75rem;
+  font-family: 'Courier New', monospace; max-height: 200px; overflow-y: auto;
+  color: var(--text2);
+}
+.log-line { padding: 1px 0; }
+.log-ok { color: var(--accent3); }
+.log-warn { color: var(--warn); }
+.log-err { color: var(--danger); }
+.log-info { color: var(--accent); }
+
+/* ── TOP MATCH BAR ── */
+.top-match-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.top-match-name { width: 180px; font-size: 0.8rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-match-track { flex: 1; background: var(--card2); border-radius: 4px; height: 20px; overflow: hidden; }
+.top-match-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.7rem; font-weight: 700; color: #fff; transition: width 0.6s ease; }
+.top-match-pct { width: 45px; text-align: right; font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+
+/* ── EMAIL / SMS COMPOSE ── */
+.contact-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px; font-size: 0.82rem;
+}
+.contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff; font-size: 0.8rem; flex-shrink: 0;
+}
+.contact-info { flex: 1; }
+.contact-name { font-weight: 600; }
+.contact-detail { color: var(--text3); font-size: 0.75rem; }
+.contact-score { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); }
+.contact-check input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--card); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(10,14,26,0.9);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; gap: 16px;
+}
+.loading-spinner {
+  width: 50px; height: 50px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 0.9rem; color: var(--text2); }
+.loading-sub { font-size: 0.75rem; color: var(--text3); }
+.hidden { display: none !important; }
+
+/* TOAST */
+.toast-container-custom {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 9000; display: flex; flex-direction: column; gap: 8px;
+}
+.toast-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 260px; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast-icon { font-size: 1rem; }
+.toast-msg { font-size: 0.82rem; }
+.toast-success .toast-icon { color: var(--accent3); }
+.toast-error .toast-icon { color: var(--danger); }
+.toast-info .toast-icon { color: var(--accent); }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+label.form-label-dark { color: var(--text2); font-size: 0.78rem; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.weight-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: var(--border); outline: none; }
+.weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+
+/* section separator */
+.sec-sep { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.sec-sep-line { flex: 1; height: 1px; background: var(--border); }
+.sec-sep-text { color: var(--text3); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+
+.table-scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="main-wrap">
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+    <div>
+      <div class="brand-name">CV Shortlist <span>Pro</span></div>
+      <div class="brand-sub">Recruitment Intelligence System</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-val" id="hstat-cvs">0</div><div class="hstat-lbl">CVs Loaded</div></div>
+    <div class="hstat"><div class="hstat-val" id="hstat-kw">0</div><div class="hstat-lbl">Keywords</div></div>
+    <div class="hstat"><div class="hstat-val" id="hstat-ranked">0</div><div class="hstat-lbl">Ranked</div></div>
+    <div class="hstat"><div class="hstat-val" id="hstat-top" style="color:var(--accent3)">—</div><div class="hstat-lbl">Top Score</div></div>
+  </div>
+</header>
+
+<!-- NAV -->
+<div class="nav-pills-custom" id="mainNav">
+  <div class="nav-link active" data-tab="tab-upload"><i class="fas fa-upload"></i> Upload CVs</div>
+  <div class="nav-link" data-tab="tab-jd"><i class="fas fa-file-alt"></i> Job Description</div>
+  <div class="nav-link" data-tab="tab-keywords"><i class="fas fa-tags"></i> Keywords & Weights</div>
+  <div class="nav-link" data-tab="tab-analyse"><i class="fas fa-brain"></i> Analyse</div>
+  <div class="nav-link" data-tab="tab-ranking"><i class="fas fa-trophy"></i> Rankings</div>
+  <div class="nav-link" data-tab="tab-reports"><i class="fas fa-chart-bar"></i> Reports</div>
+  <div class="nav-link" data-tab="tab-contact"><i class="fas fa-envelope"></i> Contact Lists</div>
+</div>
+
+<div class="tab-content-area">
+
+<!-- ═══ TAB: UPLOAD ═══ -->
+<div class="tab-pane active" id="tab-upload">
+  <div class="row mt-3">
+    <div class="col-lg-7">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-cloud-upload-alt panel-icon"></i>
+          <div class="panel-title">Upload CVs (Max 50 Files)</div>
+          <span class="ms-auto badge" style="background:rgba(0,212,255,0.15);color:var(--accent);font-size:0.72rem;" id="cv-count-badge">0 / 50</span>
+        </div>
+        <div class="upload-zone" id="cvDropZone" onclick="document.getElementById('cvFileInput').click()">
+          <input type="file" id="cvFileInput" accept=".pdf,.doc,.docx,.txt" multiple>
+          <div class="upload-icon"><i class="fas fa-file-import"></i></div>
+          <div class="upload-title">Drop CV files here or click to browse</div>
+          <div class="upload-sub mt-1">Supports PDF, DOCX, TXT — Up to 50 files</div>
+          <div class="mt-3">
+            <span class="badge me-2" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:0.7rem;">PDF</span>
+            <span class="badge me-2" style="background:rgba(59,130,246,0.15);color:#60a5fa;font-size:0.7rem;">DOCX</span>
+            <span class="badge" style="background:rgba(16,185,129,0.15);color:var(--accent3);font-size:0.7rem;">TXT</span>
+          </div>
+        </div>
+        <div class="file-list" id="cvFileList"></div>
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn-outline" onclick="clearAllCVs()"><i class="fas fa-trash-alt"></i> Clear All</button>
+          <button class="btn-accent ms-auto" onclick="goToTab('tab-jd')">Next: Job Description <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-info-circle panel-icon"></i>
+          <div class="panel-title">Quick Guide</div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text2);line-height:1.8;">
+          <div class="mb-3"><span style="color:var(--accent);font-weight:700;">① Upload CVs</span><br>Upload up to 50 CV files. System will extract text automatically from PDF, DOCX, and TXT formats.</div>
+          <div class="mb-3"><span style="color:var(--accent);font-weight:700;">② Add Job Description</span><br>Upload or paste a JD — keywords are auto-extracted from it to enrich your search criteria.</div>
+          <div class="mb-3"><span style="color:var(--accent);font-weight:700;">③ Set Keywords & Weights</span><br>Add custom keywords with importance weights. Assign tags like Must Have, Good to Have, etc.</div>
+          <div class="mb-3"><span style="color:var(--accent);font-weight:700;">④ Analyse</span><br>Run smart analysis — system reads each CV, extracts candidate info and scores against criteria.</div>
+          <div><span style="color:var(--accent);font-weight:700;">⑤ Export Reports</span><br>Download ranked Excel reports, contact lists, email/SMS templates and more.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: JD ═══ -->
+<div class="tab-pane" id="tab-jd">
+  <div class="row mt-3">
+    <div class="col-lg-6">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-file-upload panel-icon"></i>
+          <div class="panel-title">Upload Job Description</div>
+        </div>
+        <div class="upload-zone" id="jdDropZone" onclick="document.getElementById('jdFileInput').click()">
+          <input type="file" id="jdFileInput" accept=".pdf,.doc,.docx,.txt">
+          <div class="upload-icon" style="color:var(--accent2)"><i class="fas fa-briefcase"></i></div>
+          <div class="upload-title">Drop JD file here</div>
+          <div class="upload-sub mt-1">PDF, DOCX or TXT</div>
+        </div>
+        <div id="jdFileInfo" class="mt-2"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-edit panel-icon"></i>
+          <div class="panel-title">Or Paste JD Text</div>
+        </div>
+        <label class="form-label-dark">Job Title</label>
+        <input type="text" class="form-control-dark mb-3" id="jobTitle" placeholder="e.g. Senior Software Engineer">
+        <label class="form-label-dark">Job Description</label>
+        <textarea class="form-control-dark" id="jdText" rows="8" placeholder="Paste the full job description here..."></textarea>
+        <button class="btn-purple mt-3 w-100" onclick="extractFromJD()"><i class="fas fa-magic"></i> Auto-Extract Keywords from JD</button>
+        <div id="jdExtractResult" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: KEYWORDS ═══ -->
+<div class="tab-pane" id="tab-keywords">
+  <div class="row mt-3">
+    <div class="col-lg-7">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-tags panel-icon"></i>
+          <div class="panel-title">Keyword Management</div>
+        </div>
+        <label class="form-label-dark">Add Keywords / Skills / Tags</label>
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" class="form-control-dark" id="kwInput" placeholder="Type keyword and press Enter or comma..." style="flex:1">
+          <select class="form-control-dark" id="kwCategory" style="width:160px">
+            <option value="must">Must Have</option>
+            <option value="good">Good to Have</option>
+            <option value="bonus">Bonus</option>
+            <option value="exclude">Exclude</option>
+          </select>
+          <button class="btn-accent" onclick="addKeyword()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:12px;">Press <kbd style="background:var(--card2);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">Enter</kbd> or <kbd style="background:var(--card2);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">,</kbd> to add multiple</div>
+        <div class="sec-sep"><div class="sec-sep-line"></div><div class="sec-sep-text">Must Have</div><div class="sec-sep-line"></div></div>
+        <div class="tag-input-wrap" id="tags-must"><span style="font-size:0.75rem;color:var(--text3)">No must-have keywords yet</span></div>
+        <div class="sec-sep"><div class="sec-sep-line"></div><div class="sec-sep-text">Good to Have</div><div class="sec-sep-line"></div></div>
+        <div class="tag-input-wrap" id="tags-good"><span style="font-size:0.75rem;color:var(--text3)">No good-to-have keywords yet</span></div>
+        <div class="sec-sep"><div class="sec-sep-line"></div><div class="sec-sep-text">Bonus</div><div class="sec-sep-line"></div></div>
+        <div class="tag-input-wrap" id="tags-bonus"><span style="font-size:0.75rem;color:var(--text3)">No bonus keywords yet</span></div>
+        <div class="sec-sep"><div class="sec-sep-line"></div><div class="sec-sep-text">Exclude (Flag if present)</div><div class="sec-sep-line"></div></div>
+        <div class="tag-input-wrap" id="tags-exclude"><span style="font-size:0.75rem;color:var(--text3)">No exclusion keywords yet</span></div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-sliders-h panel-icon"></i>
+          <div class="panel-title">Scoring Weights</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Must Have keywords weight</label>
+          <div class="d-flex align-items-center gap-2">
+            <input type="range" class="weight-slider flex-1" id="wMust" min="1" max="10" value="10" oninput="document.getElementById('wMustVal').textContent=this.value">
+            <span id="wMustVal" style="color:var(--accent);font-weight:700;width:20px;text-align:right">10</span>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Good to Have keywords weight</label>
+          <div class="d-flex align-items-center gap-2">
+            <input type="range" class="weight-slider flex-1" id="wGood" min="1" max="10" value="5" oninput="document.getElementById('wGoodVal').textContent=this.value">
+            <span id="wGoodVal" style="color:var(--warn);font-weight:700;width:20px;text-align:right">5</span>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Bonus keywords weight</label>
+          <div class="d-flex align-items-center gap-2">
+            <input type="range" class="weight-slider flex-1" id="wBonus" min="1" max="10" value="2" oninput="document.getElementById('wBonusVal').textContent=this.value">
+            <span id="wBonusVal" style="color:var(--accent3);font-weight:700;width:20px;text-align:right">2</span>
+          </div>
+        </div>
+        <hr class="divider">
+        <label class="form-label-dark">Experience Keywords</label>
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" class="form-control-dark" id="expInput" placeholder="e.g. 5 years, senior, manager">
+          <button class="btn-accent" onclick="addExpKeyword()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="tag-input-wrap" id="tags-exp"><span style="font-size:0.75rem;color:var(--text3)">No experience keywords</span></div>
+        <hr class="divider">
+        <label class="form-label-dark">Education Keywords</label>
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" class="form-control-dark" id="eduInput" placeholder="e.g. BSc, Masters, MBA, PhD">
+          <button class="btn-accent" onclick="addEduKeyword()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="tag-input-wrap" id="tags-edu"><span style="font-size:0.75rem;color:var(--text3)">No education keywords</span></div>
+        <hr class="divider">
+        <button class="btn-accent w-100" onclick="goToTab('tab-analyse')"><i class="fas fa-brain"></i> Proceed to Analyse</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: ANALYSE ═══ -->
+<div class="tab-pane" id="tab-analyse">
+  <div class="row mt-3">
+    <div class="col-lg-5">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-cogs panel-icon"></i>
+          <div class="panel-title">Analysis Configuration</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Analysis Mode</label>
+          <select class="form-control-dark" id="analysisMode">
+            <option value="smart">Smart (Keyword + Context)</option>
+            <option value="strict">Strict (Exact Match)</option>
+            <option value="fuzzy">Fuzzy (Partial Match)</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Minimum Score Threshold (%)</label>
+          <input type="number" class="form-control-dark" id="minScore" value="20" min="0" max="100">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-dark">Max Candidates to Shortlist</label>
+          <input type="number" class="form-control-dark" id="maxShortlist" value="10" min="1" max="50">
+        </div>
+        <hr class="divider">
+        <div id="analyse-summary" class="alert-info mb-3" id="analyse-summary">
+          <i class="fas fa-info-circle me-2"></i> Ready to analyse. Check configuration above.
+        </div>
+        <button class="btn-accent w-100" id="startAnalyseBtn" onclick="startAnalysis()">
+          <i class="fas fa-play-circle"></i> Start CV Analysis
+        </button>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-terminal panel-icon"></i>
+          <div class="panel-title">Processing Log</div>
+          <button class="btn-sm-icon ms-auto" onclick="document.getElementById('processLog').innerHTML=''">Clear</button>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-1">
+            <span style="font-size:0.78rem;color:var(--text3)">Overall Progress</span>
+            <span style="font-size:0.78rem;color:var(--accent)" id="progressPct">0%</span>
+          </div>
+          <div class="progress-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+        </div>
+        <div class="process-log" id="processLog">
+          <div class="log-line log-info">&gt; System ready. Upload CVs and configure keywords to begin.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: RANKINGS ═══ -->
+<div class="tab-pane" id="tab-ranking">
+  <div class="mt-3">
+    <!-- Top 3 Podium -->
+    <div id="topPodium" class="row mb-3 g-3"></div>
+    <!-- Filters -->
+    <div class="panel mb-3">
+      <div class="d-flex gap-3 align-items-center flex-wrap">
+        <div style="flex:1;min-width:200px">
+          <input type="text" class="form-control-dark" id="rankSearch" placeholder="🔍  Search candidate name..." oninput="filterRankings()">
+        </div>
+        <select class="form-control-dark" style="width:160px" id="rankFilter" onchange="filterRankings()">
+          <option value="all">All Candidates</option>
+          <option value="shortlisted">Shortlisted Only</option>
+          <option value="high">High Match (>70%)</option>
+          <option value="mid">Medium Match (40-70%)</option>
+          <option value="low">Low Match (<40%)</option>
+        </select>
+        <select class="form-control-dark" style="width:140px" id="rankSort" onchange="filterRankings()">
+          <option value="score">Sort: Score</option>
+          <option value="name">Sort: Name</option>
+          <option value="edu">Sort: Education</option>
+        </select>
+        <button class="btn-green" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+        <button class="btn-outline" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+      </div>
+    </div>
+    <div class="panel p-0">
+      <div class="table-scroll">
+        <table class="rank-table" id="rankTable">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>Candidate</th>
+              <th>NIC / ID</th>
+              <th>Contact</th>
+              <th>Education</th>
+              <th>Experience</th>
+              <th>Matched Keywords</th>
+              <th style="width:80px">Score</th>
+              <th style="width:80px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rankTableBody">
+            <tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px;">
+              <i class="fas fa-brain" style="font-size:2rem;display:block;margin-bottom:8px;opacity:0.3"></i>
+              No analysis run yet. Upload CVs and click Analyse.
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: REPORTS ═══ -->
+<div class="tab-pane" id="tab-reports">
+  <div class="mt-3">
+    <div class="row g-3 mb-4">
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportExcel()">
+          <div class="report-icon" style="color:#1d6f42"><i class="fas fa-file-excel"></i></div>
+          <div class="report-title">Full Ranking Report</div>
+          <div class="report-desc">All candidates ranked with scores, keywords, education & experience</div>
+          <span class="badge mt-1" style="background:rgba(29,111,66,0.2);color:#4ade80;font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportShortlistReport()">
+          <div class="report-icon" style="color:var(--accent)"><i class="fas fa-star"></i></div>
+          <div class="report-title">Shortlist Report</div>
+          <div class="report-desc">Top shortlisted candidates only with detailed match analysis</div>
+          <span class="badge mt-1" style="background:rgba(0,212,255,0.15);color:var(--accent);font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportCSV()">
+          <div class="report-icon" style="color:var(--warn)"><i class="fas fa-file-csv"></i></div>
+          <div class="report-title">CSV Export</div>
+          <div class="report-desc">Raw data export for import into ATS or HR systems</div>
+          <span class="badge mt-1" style="background:rgba(245,158,11,0.15);color:var(--warn);font-size:0.7rem;">CSV</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportEmailList()">
+          <div class="report-icon" style="color:#a78bfa"><i class="fas fa-envelope-open-text"></i></div>
+          <div class="report-title">Email Contact List</div>
+          <div class="report-desc">Candidate list with emails for batch communication</div>
+          <span class="badge mt-1" style="background:rgba(124,58,237,0.15);color:#a78bfa;font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportSMSList()">
+          <div class="report-icon" style="color:var(--accent3)"><i class="fas fa-sms"></i></div>
+          <div class="report-title">SMS Contact List</div>
+          <div class="report-desc">Phone numbers list formatted for bulk SMS systems</div>
+          <span class="badge mt-1" style="background:rgba(16,185,129,0.15);color:var(--accent3);font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportPerCandidateReport()">
+          <div class="report-icon" style="color:#f472b6"><i class="fas fa-user-check"></i></div>
+          <div class="report-title">Per-Candidate Report</div>
+          <div class="report-desc">Individual score breakdown sheet per candidate</div>
+          <span class="badge mt-1" style="background:rgba(244,114,182,0.15);color:#f472b6;font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportKeywordReport()">
+          <div class="report-icon" style="color:var(--accent)"><i class="fas fa-chart-pie"></i></div>
+          <div class="report-title">Keyword Frequency Report</div>
+          <div class="report-desc">How often each keyword appeared across all CVs</div>
+          <span class="badge mt-1" style="background:rgba(0,212,255,0.15);color:var(--accent);font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="report-card" onclick="exportRejectedReport()">
+          <div class="report-icon" style="color:var(--danger)"><i class="fas fa-times-circle"></i></div>
+          <div class="report-title">Not-Shortlisted Report</div>
+          <div class="report-desc">Below threshold candidates with reasons</div>
+          <span class="badge mt-1" style="background:rgba(239,68,68,0.15);color:var(--danger);font-size:0.7rem;">Excel .XLSX</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Matches Visual -->
+    <div class="panel">
+      <div class="panel-header">
+        <i class="fas fa-chart-bar panel-icon"></i>
+        <div class="panel-title">Top Candidate Match Rate</div>
+      </div>
+      <div id="topMatchBars">
+        <div style="color:var(--text3);font-size:0.82rem;text-align:center;padding:20px;">Run analysis first to see match rates</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: CONTACT ═══ -->
+<div class="tab-pane" id="tab-contact">
+  <div class="row mt-3">
+    <div class="col-lg-5">
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-users panel-icon"></i>
+          <div class="panel-title">Candidate Contact List</div>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <select class="form-control-dark" id="contactFilter">
+            <option value="all">All Candidates</option>
+            <option value="shortlisted">Shortlisted Only</option>
+            <option value="top10">Top 10</option>
+          </select>
+          <button class="btn-outline" onclick="selectAllContacts()"><i class="fas fa-check-square"></i></button>
+          <button class="btn-outline" onclick="deselectAllContacts()"><i class="fas fa-square"></i></button>
+        </div>
+        <div id="contactList" style="max-height:420px;overflow-y:auto;">
+          <div style="color:var(--text3);font-size:0.82rem;text-align:center;padding:20px;">Run analysis first</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="panel mb-3">
+        <div class="panel-header">
+          <i class="fas fa-envelope panel-icon"></i>
+          <div class="panel-title">Email Template</div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label-dark">Email Subject</label>
+          <input type="text" class="form-control-dark" id="emailSubject" value="Interview Invitation - [Job Title]">
+        </div>
+        <div class="mb-2">
+          <label class="form-label-dark">Email Body</label>
+          <textarea class="form-control-dark" id="emailBody" rows="5">Dear [Candidate Name],
+
+We are pleased to inform you that your profile has been shortlisted for the position of [Job Title].
+
+We would like to invite you for an interview. Please reply to confirm your availability.
+
+Best regards,
+HR Team</textarea>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn-purple" onclick="generateEmailDraft()"><i class="fas fa-envelope-open-text"></i> Generate Email List</button>
+          <button class="btn-outline" onclick="exportEmailList()"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-sms panel-icon"></i>
+          <div class="panel-title">SMS Template</div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label-dark">SMS Message (160 chars recommended)</label>
+          <textarea class="form-control-dark" id="smsBody" rows="3">Dear [Name], Your profile has been shortlisted for [Job Title]. Please call us to schedule your interview. - HR Team</textarea>
+          <div id="smsCount" style="font-size:0.72rem;color:var(--text3);margin-top:4px;">0 / 160 chars</div>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn-green" onclick="generateSMSDraft()"><i class="fas fa-sms"></i> Generate SMS List</button>
+          <button class="btn-outline" onclick="exportSMSList()"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /tab-content-area -->
+</div><!-- /main-wrap -->
+
+<!-- Candidate Detail Modal -->
+<div class="modal fade" id="candidateModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dark">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-family:'Syne',sans-serif;font-weight:700;" id="modalCandName">Candidate Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn-outline" data-bs-dismiss="modal">Close</button>
+        <button class="btn-accent" onclick="exportSingleCandidate()"><i class="fas fa-download"></i> Export Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Processing CVs...</div>
+  <div class="loading-sub" id="loadingSub">Please wait</div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container-custom" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+const state = {
+  cvFiles: [],       // { file, name, text, status }
+  jdText: '',
+  jobTitle: '',
+  keywords: { must: [], good: [], bonus: [], exclude: [] },
+  expKeywords: [],
+  eduKeywords: [],
+  results: [],       // analysed candidates
+  currentModal: null
+};
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+document.querySelectorAll('#mainNav .nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    const tab = link.dataset.tab;
+    goToTab(tab);
+  });
+});
+function goToTab(tabId) {
+  document.querySelectorAll('#mainNav .nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+  document.getElementById(tabId)?.classList.add('active');
+}
+
+// ============================================================
+// FILE UPLOAD - CVs
+// ============================================================
+const cvDrop = document.getElementById('cvDropZone');
+cvDrop.addEventListener('dragover', e => { e.preventDefault(); cvDrop.classList.add('dragover'); });
+cvDrop.addEventListener('dragleave', () => cvDrop.classList.remove('dragover'));
+cvDrop.addEventListener('drop', e => {
+  e.preventDefault(); cvDrop.classList.remove('dragover');
+  handleCVFiles(e.dataTransfer.files);
+});
+document.getElementById('cvFileInput').addEventListener('change', e => handleCVFiles(e.target.files));
+
+function handleCVFiles(files) {
+  const arr = Array.from(files);
+  const remaining = 50 - state.cvFiles.length;
+  const toAdd = arr.slice(0, remaining);
+  if (arr.length > remaining) showToast(`Only ${remaining} more files allowed (max 50)`, 'error');
+  toAdd.forEach(f => {
+    if (!state.cvFiles.find(x => x.name === f.name)) {
+      state.cvFiles.push({ file: f, name: f.name, text: '', status: 'pending' });
+    }
+  });
+  renderFileList();
+  updateHeaderStats();
+}
+function renderFileList() {
+  const list = document.getElementById('cvFileList');
+  document.getElementById('cv-count-badge').textContent = `${state.cvFiles.length} / 50`;
+  if (!state.cvFiles.length) { list.innerHTML = ''; return; }
+  list.innerHTML = state.cvFiles.map((f, i) => `
+    <div class="file-item">
+      <div class="file-item-icon"><i class="fas fa-file-${f.name.endsWith('.pdf') ? 'pdf' : f.name.endsWith('.txt') ? 'alt' : 'word'}"></i></div>
+      <div class="file-item-name">${f.name}</div>
+      <div class="file-item-size">${(f.file.size/1024).toFixed(1)}KB</div>
+      <span class="file-item-status status-${f.status}">${f.status}</span>
+      <button class="file-remove" onclick="removeCV(${i})"><i class="fas fa-times"></i></button>
+    </div>
+  `).join('');
+}
+function removeCV(i) { state.cvFiles.splice(i, 1); renderFileList(); updateHeaderStats(); }
+function clearAllCVs() { state.cvFiles = []; state.results = []; renderFileList(); updateHeaderStats(); }
+
+// ============================================================
+// JD UPLOAD
+// ============================================================
+const jdDrop = document.getElementById('jdDropZone');
+jdDrop.addEventListener('dragover', e => { e.preventDefault(); jdDrop.classList.add('dragover'); });
+jdDrop.addEventListener('dragleave', () => jdDrop.classList.remove('dragover'));
+jdDrop.addEventListener('drop', e => {
+  e.preventDefault(); jdDrop.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) handleJDFile(e.dataTransfer.files[0]);
+});
+document.getElementById('jdFileInput').addEventListener('change', e => { if (e.target.files[0]) handleJDFile(e.target.files[0]); });
+
+async function handleJDFile(file) {
+  const text = await extractText(file);
+  state.jdText = text;
+  document.getElementById('jdText').value = text;
+  document.getElementById('jdFileInfo').innerHTML = `<div class="alert-success"><i class="fas fa-check-circle me-2"></i>JD loaded: ${file.name} (${text.length} chars)</div>`;
+  showToast('JD file loaded successfully', 'success');
+}
+
+// ============================================================
+// TEXT EXTRACTION (PDF, DOCX, TXT)
+// ============================================================
+async function extractText(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.txt')) return await file.text();
+  if (name.endsWith('.pdf')) return await extractPDF(file);
+  if (name.endsWith('.docx') || name.endsWith('.doc')) return await extractDOCX(file);
+  return await file.text();
+}
+
+async function extractPDF(file) {
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const ab = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(s => s.str).join(' ') + '\n';
+    }
+    return text;
+  } catch (e) { return `[PDF extraction failed: ${e.message}]`; }
+}
+
+async function extractDOCX(file) {
+  try {
+    const ab = await file.arrayBuffer();
+    const arr = new Uint8Array(ab);
+    // Simple DOCX text extraction — unzip XML and strip tags
+    // Using a simple approach: look for word/document.xml in the zip
+    let text = '';
+    // Try to get raw text from binary (basic fallback)
+    const decoder = new TextDecoder('utf-8', { fatal: false });
+    const raw = decoder.decode(arr);
+    // Extract text between XML tags
+    const matches = raw.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+    if (matches) {
+      text = matches.map(m => m.replace(/<[^>]+>/g, '')).join(' ');
+    } else {
+      text = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    return text || '[Could not extract DOCX text]';
+  } catch (e) { return `[DOCX extraction failed]`; }
+}
+
+// ============================================================
+// JD KEYWORD EXTRACTION
+// ============================================================
+function extractFromJD() {
+  const txt = document.getElementById('jdText').value;
+  state.jdText = txt;
+  state.jobTitle = document.getElementById('jobTitle').value;
+  if (!txt.trim()) { showToast('Please paste a job description first', 'error'); return; }
+
+  // Extract technical keywords
+  const techPatterns = [
+    /\b(python|java|javascript|typescript|react|angular|vue|node\.?js|php|ruby|go|golang|rust|c\+\+|c#|\.net|sql|mysql|postgresql|mongodb|redis|docker|kubernetes|aws|azure|gcp|git|linux|html|css|sass|rest|api|graphql|microservices|agile|scrum|devops|ci\/cd|machine learning|deep learning|nlp|tensorflow|pytorch|excel|powerbi|tableau|salesforce|sap|hr|recruitment|finance|accounting|marketing|project management|leadership|communication)\b/gi,
+    /\b(\d+\+?\s*years?)\b/gi,
+    /\b(bachelor|master|mba|phd|degree|diploma|certification|bsc|msc|btech|mtech)\b/gi,
+  ];
+
+  const found = new Set();
+  techPatterns.forEach(p => {
+    const m = txt.match(p);
+    if (m) m.forEach(x => found.add(x.toLowerCase().trim()));
+  });
+
+  // Add to keywords
+  found.forEach(kw => {
+    if (!state.keywords.must.includes(kw) && !state.keywords.good.includes(kw) && !state.keywords.bonus.includes(kw)) {
+      state.keywords.good.push(kw);
+    }
+  });
+
+  renderKeywordTags();
+  updateHeaderStats();
+  document.getElementById('jdExtractResult').innerHTML = `<div class="alert-success mt-2"><i class="fas fa-check-circle me-2"></i>${found.size} keywords extracted and added to Good to Have list</div>`;
+  showToast(`${found.size} keywords extracted from JD`, 'success');
+}
+
+// ============================================================
+// KEYWORD MANAGEMENT
+// ============================================================
+function addKeyword() {
+  const input = document.getElementById('kwInput');
+  const cat = document.getElementById('kwCategory').value;
+  const val = input.value.trim();
+  if (!val) return;
+  val.split(/[,\n]/).map(v => v.trim().toLowerCase()).filter(Boolean).forEach(kw => {
+    if (!state.keywords[cat].includes(kw)) state.keywords[cat].push(kw);
+  });
+  input.value = '';
+  renderKeywordTags();
+  updateHeaderStats();
+}
+document.getElementById('kwInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addKeyword(); }
+});
+
+function addExpKeyword() {
+  const v = document.getElementById('expInput').value.trim().toLowerCase();
+  if (v && !state.expKeywords.includes(v)) { state.expKeywords.push(v); document.getElementById('expInput').value = ''; renderKeywordTags(); }
+}
+function addEduKeyword() {
+  const v = document.getElementById('eduInput').value.trim().toLowerCase();
+  if (v && !state.eduKeywords.includes(v)) { state.eduKeywords.push(v); document.getElementById('eduInput').value = ''; renderKeywordTags(); }
+}
+document.getElementById('expInput').addEventListener('keydown', e => { if (e.key === 'Enter') addExpKeyword(); });
+document.getElementById('eduInput').addEventListener('keydown', e => { if (e.key === 'Enter') addEduKeyword(); });
+
+function renderKeywordTags() {
+  ['must','good','bonus','exclude'].forEach(cat => {
+    const el = document.getElementById(`tags-${cat}`);
+    if (!state.keywords[cat].length) {
+      el.innerHTML = `<span style="font-size:0.75rem;color:var(--text3)">No ${cat.replace('must','must-have').replace('good','good-to-have')} keywords yet</span>`;
+      return;
+    }
+    const colors = { must:'tag-kw', good:'tag-jd', bonus:'', exclude:'' };
+    const styles = { must:'', good:'', bonus:'background:rgba(16,185,129,0.1);color:var(--accent3);border:1px solid rgba(16,185,129,0.2)', exclude:'background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2)' };
+    el.innerHTML = state.keywords[cat].map((kw, i) =>
+      `<span class="tag ${colors[cat]}" style="${styles[cat]}">${kw} <span class="tag-remove" onclick="removeKw('${cat}',${i})">×</span></span>`
+    ).join('');
+  });
+  // Exp / Edu
+  const expEl = document.getElementById('tags-exp');
+  expEl.innerHTML = state.expKeywords.length ? state.expKeywords.map((kw,i) => `<span class="tag" style="background:rgba(245,158,11,0.1);color:var(--warn);border:1px solid rgba(245,158,11,0.2)">${kw} <span class="tag-remove" onclick="removeExpKw(${i})">×</span></span>`).join('') : '<span style="font-size:0.75rem;color:var(--text3)">No experience keywords</span>';
+  const eduEl = document.getElementById('tags-edu');
+  eduEl.innerHTML = state.eduKeywords.length ? state.eduKeywords.map((kw,i) => `<span class="tag" style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2)">${kw} <span class="tag-remove" onclick="removeEduKw(${i})">×</span></span>`).join('') : '<span style="font-size:0.75rem;color:var(--text3)">No education keywords</span>';
+}
+function removeKw(cat, i) { state.keywords[cat].splice(i,1); renderKeywordTags(); updateHeaderStats(); }
+function removeExpKw(i) { state.expKeywords.splice(i,1); renderKeywordTags(); }
+function removeEduKw(i) { state.eduKeywords.splice(i,1); renderKeywordTags(); }
+
+// ============================================================
+// ANALYSIS ENGINE
+// ============================================================
+async function startAnalysis() {
+  if (!state.cvFiles.length) { showToast('Please upload CV files first', 'error'); return; }
+  const allKw = [...state.keywords.must, ...state.keywords.good, ...state.keywords.bonus];
+  if (!allKw.length) { showToast('Please add at least one keyword', 'error'); return; }
+
+  const btn = document.getElementById('startAnalyseBtn');
+  btn.disabled = true;
+  setProgress(0);
+  addLog('info', '▶ Starting CV Analysis Engine...');
+  addLog('info', `📄 Files to process: ${state.cvFiles.length}`);
+  addLog('info', `🔑 Keywords: ${allKw.length} | Must: ${state.keywords.must.length} | Good: ${state.keywords.good.length} | Bonus: ${state.keywords.bonus.length}`);
+
+  state.results = [];
+
+  for (let i = 0; i < state.cvFiles.length; i++) {
+    const cv = state.cvFiles[i];
+    setProgress(Math.round((i / state.cvFiles.length) * 100));
+    addLog('info', `Processing: ${cv.name}`);
+
+    try {
+      // Extract text
+      cv.text = await extractText(cv.file);
+      cv.status = 'done';
+
+      // Parse candidate info
+      const info = parseCandidateInfo(cv.text, cv.name);
+
+      // Score
+      const score = scoreCV(cv.text, info);
+
+      state.results.push({ ...info, fileName: cv.name, score, text: cv.text });
+      addLog('ok', `✓ ${cv.name} → Score: ${score.total}% | ${info.name}`);
+    } catch (e) {
+      cv.status = 'error';
+      addLog('err', `✗ ${cv.name}: ${e.message}`);
+    }
+
+    renderFileList();
+    await sleep(50);
+  }
+
+  // Sort by score
+  state.results.sort((a, b) => b.score.total - a.score.total);
+
+  setProgress(100);
+  addLog('ok', `✅ Analysis complete! ${state.results.length} CVs processed.`);
+  addLog('info', `🏆 Top Candidate: ${state.results[0]?.name || 'N/A'} (${state.results[0]?.score.total || 0}%)`);
+
+  btn.disabled = false;
+  updateHeaderStats();
+  renderRankingTable();
+  renderTopPodium();
+  renderTopMatchBars();
+  renderContactList();
+  showToast('Analysis complete! Check Rankings tab.', 'success');
+  goToTab('tab-ranking');
+}
+
+function parseCandidateInfo(text, fileName) {
+  const clean = text.replace(/\s+/g, ' ');
+
+  // Name extraction
+  let name = extractName(clean) || fileName.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+
+  // NIC extraction (Sri Lanka NIC patterns + general ID patterns)
+  let nic = '';
+  const nicPatterns = [
+    /\b(\d{9}[VvXx])\b/,                    // SL old NIC
+    /\b(\d{12})\b/,                          // SL new NIC
+    /nic\s*:?\s*([A-Z0-9\-]{6,15})/i,
+    /national\s*id\s*:?\s*([A-Z0-9\-]{6,15})/i,
+    /id\s*no\s*:?\s*([A-Z0-9\-]{6,15})/i,
+    /passport\s*:?\s*([A-Z0-9]{7,10})/i,
+  ];
+  for (const p of nicPatterns) { const m = clean.match(p); if (m) { nic = m[1]; break; } }
+
+  // Phone extraction
+  let phone = '';
+  const phonePatterns = [
+    /\b(\+94\s?\d{9})\b/,
+    /\b(0\d{9})\b/,
+    /\b(\+\d{1,3}[\s-]?\(?\d{1,4}\)?[\s-]?\d{3,4}[\s-]?\d{3,4})\b/,
+    /phone\s*:?\s*([\d\s\+\-\(\)]{7,16})/i,
+    /mobile\s*:?\s*([\d\s\+\-\(\)]{7,16})/i,
+    /tel\s*:?\s*([\d\s\+\-\(\)]{7,16})/i,
+    /contact\s*:?\s*([\d\s\+\-\(\)]{7,16})/i,
+  ];
+  for (const p of phonePatterns) { const m = clean.match(p); if (m) { phone = m[1].trim(); break; } }
+
+  // Email
+  let email = '';
+  const emailM = clean.match(/\b[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}\b/);
+  if (emailM) email = emailM[0];
+
+  // Education detection
+  const eduLevels = ['phd','doctorate','mphil','mba','masters','master','msc','meng','mtech','bsc','beng','btech','bachelor','degree','diploma','hnd','hnc','a level','o level','alevel','olevel'];
+  let education = '';
+  const textLower = clean.toLowerCase();
+  for (const e of eduLevels) { if (textLower.includes(e)) { education = e.toUpperCase(); break; } }
+  // Check user-defined edu keywords
+  for (const e of state.eduKeywords) { if (textLower.includes(e.toLowerCase())) { if (!education || eduLevels.indexOf(e.toLowerCase()) < eduLevels.indexOf(education.toLowerCase())) education = e.toUpperCase(); } }
+
+  // Experience (years)
+  let experience = '';
+  const expPatterns = [
+    /(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/i,
+    /experience\s*:?\s*(\d+)\s*years?/i,
+    /(\d+)\s*years?\s*(working|professional)/i,
+  ];
+  for (const p of expPatterns) { const m = clean.match(p); if (m) { experience = m[1] + ' years'; break; } }
+
+  return { name, nic, phone, email, education, experience };
+}
+
+function extractName(text) {
+  // Try common name patterns
+  const patterns = [
+    /^([A-Z][a-z]+(?: [A-Z][a-z]+){1,3})/m,  // First line capitalised
+    /name\s*:?\s*([A-Z][a-zA-Z\s]{2,40})/i,
+    /curriculum vitae\s*\n+([A-Z][a-zA-Z\s]{2,40})/i,
+    /^([A-Z]{2,}(?:\s+[A-Z]{2,})+)/m,          // ALL CAPS name
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m && m[1] && m[1].trim().length > 2 && m[1].trim().length < 50) {
+      const candidate = m[1].trim();
+      // Filter out common header words
+      if (!/(curriculum|vitae|resume|cv|profile|contact|details|personal|objective|summary)/i.test(candidate)) {
+        return candidate;
+      }
+    }
+  }
+  return null;
+}
+
+function scoreCV(text, info) {
+  const textLower = text.toLowerCase();
+  const wMust = parseInt(document.getElementById('wMust').value);
+  const wGood = parseInt(document.getElementById('wGood').value);
+  const wBonus = parseInt(document.getElementById('wBonus').value);
+  const mode = document.getElementById('analysisMode').value;
+
+  const matchKw = (kw) => {
+    kw = kw.toLowerCase();
+    if (mode === 'strict') return textLower.includes(kw);
+    if (mode === 'fuzzy') return textLower.includes(kw) || textLower.includes(kw.slice(0,-1));
+    // smart: check word boundary-ish
+    return textLower.includes(kw);
+  };
+
+  let rawScore = 0, maxScore = 0;
+  const matched = { must: [], good: [], bonus: [], miss: [], exclude: [] };
+
+  state.keywords.must.forEach(kw => {
+    maxScore += wMust;
+    if (matchKw(kw)) { rawScore += wMust; matched.must.push(kw); }
+    else matched.miss.push(kw);
+  });
+  state.keywords.good.forEach(kw => {
+    maxScore += wGood;
+    if (matchKw(kw)) { rawScore += wGood; matched.good.push(kw); }
+  });
+  state.keywords.bonus.forEach(kw => {
+    maxScore += wBonus;
+    if (matchKw(kw)) { rawScore += wBonus; matched.bonus.push(kw); }
+  });
+  state.keywords.exclude.forEach(kw => {
+    if (matchKw(kw)) { matched.exclude.push(kw); rawScore = Math.max(0, rawScore - wMust); }
+  });
+
+  const total = maxScore > 0 ? Math.min(100, Math.round((rawScore / maxScore) * 100)) : 0;
+  const minThreshold = parseInt(document.getElementById('minScore').value);
+  const shortlisted = total >= minThreshold;
+
+  return { total, rawScore, maxScore, matched, shortlisted };
+}
+
+// ============================================================
+// RENDER RANKINGS
+// ============================================================
+function renderRankingTable() {
+  const tbody = document.getElementById('rankTableBody');
+  const maxShortlist = parseInt(document.getElementById('maxShortlist').value);
+  let data = [...state.results];
+
+  // Apply filter
+  const filter = document.getElementById('rankFilter').value;
+  const search = document.getElementById('rankSearch').value.toLowerCase();
+  if (filter === 'shortlisted') data = data.filter(r => r.score.shortlisted);
+  if (filter === 'high') data = data.filter(r => r.score.total > 70);
+  if (filter === 'mid') data = data.filter(r => r.score.total >= 40 && r.score.total <= 70);
+  if (filter === 'low') data = data.filter(r => r.score.total < 40);
+  if (search) data = data.filter(r => r.name.toLowerCase().includes(search) || r.email.toLowerCase().includes(search));
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:30px;">No results match filter</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((r, i) => {
+    const rank = i + 1;
+    const cls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+    const scoreCls = r.score.total >= 70 ? 'score-high' : r.score.total >= 40 ? 'score-mid' : 'score-low';
+    const isShortlisted = rank <= maxShortlist && r.score.shortlisted;
+    const allMatched = [...r.score.matched.must, ...r.score.matched.good, ...r.score.matched.bonus];
+    const pillsHTML = allMatched.slice(0,5).map(k => `<span class="match-pill">${k}</span>`).join('') +
+      (r.score.matched.miss.slice(0,3).map(k => `<span class="match-pill miss">${k}</span>`).join(''));
+    return `
+      <tr class="${cls}">
+        <td>
+          <div class="rank-num">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank}</div>
+          ${isShortlisted ? '<div style="font-size:0.62rem;color:var(--accent3);text-align:center;margin-top:2px;">✓ Listed</div>' : ''}
+        </td>
+        <td>
+          <div style="font-weight:600;color:var(--text)">${r.name}</div>
+          <div style="font-size:0.72rem;color:var(--text3)">${r.email || 'No email'}</div>
+          <div style="font-size:0.7rem;color:var(--text3)">${r.fileName}</div>
+        </td>
+        <td style="color:var(--text2)">${r.nic || '<span style="color:var(--text3)">—</span>'}</td>
+        <td style="color:var(--text2)">${r.phone || '<span style="color:var(--text3)">—</span>'}</td>
+        <td><span style="color:#a78bfa;font-size:0.8rem">${r.education || '—'}</span></td>
+        <td style="color:var(--text2);font-size:0.8rem">${r.experience || '—'}</td>
+        <td><div class="match-pills">${pillsHTML || '<span style="color:var(--text3);font-size:0.75rem">No matches</span>'}</div></td>
+        <td><div class="score-badge ${scoreCls}">${r.score.total}%</div></td>
+        <td>
+          <button class="btn-sm-icon" onclick="showCandidateDetail(${state.results.indexOf(r)})" title="View Details"><i class="fas fa-eye"></i></button>
+          <button class="btn-sm-icon mt-1" onclick="exportSingleCandidateById(${state.results.indexOf(r)})" title="Export"><i class="fas fa-download"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterRankings() { renderRankingTable(); }
+
+function renderTopPodium() {
+  const top3 = state.results.slice(0, 3);
+  const podium = document.getElementById('topPodium');
+  const colors = ['#fbbf24','#94a3b8','#b45309'];
+  const icons = ['🥇','🥈','🥉'];
+  podium.innerHTML = top3.map((r, i) => `
+    <div class="col-lg-4">
+      <div class="panel" style="border-color:${colors[i]}33;background:linear-gradient(135deg,var(--card),${colors[i]}11)">
+        <div class="d-flex align-items-center gap-12" style="gap:12px">
+          <div style="font-size:2rem">${icons[i]}</div>
+          <div style="flex:1">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:${colors[i]}">${r.name}</div>
+            <div style="font-size:0.75rem;color:var(--text3)">${r.education || 'Education N/A'} · ${r.experience || 'Exp N/A'}</div>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:${colors[i]}">${r.score.total}%</div>
+        </div>
+        <div class="progress-wrap mt-2" style="height:4px"><div class="progress-bar-fill" style="width:${r.score.total}%;background:${colors[i]}"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTopMatchBars() {
+  const el = document.getElementById('topMatchBars');
+  const top = state.results.slice(0, 15);
+  if (!top.length) return;
+  el.innerHTML = top.map(r => {
+    const pct = r.score.total;
+    const color = pct >= 70 ? 'var(--accent3)' : pct >= 40 ? 'var(--warn)' : 'var(--danger)';
+    return `
+      <div class="top-match-bar">
+        <div class="top-match-name">${r.name}</div>
+        <div class="top-match-track">
+          <div class="top-match-fill" style="width:${pct}%;background:${color}">${pct > 15 ? pct+'%' : ''}</div>
+        </div>
+        <div class="top-match-pct" style="color:${color}">${pct}%</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderContactList() {
+  const el = document.getElementById('contactList');
+  const filter = document.getElementById('contactFilter').value;
+  let data = [...state.results];
+  if (filter === 'shortlisted') data = data.filter(r => r.score.shortlisted);
+  if (filter === 'top10') data = data.slice(0, 10);
+
+  el.innerHTML = data.map((r, i) => `
+    <div class="contact-card">
+      <div class="contact-check"><input type="checkbox" class="contact-cb" data-idx="${state.results.indexOf(r)}" checked></div>
+      <div class="contact-avatar">${r.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div class="contact-info">
+        <div class="contact-name">${r.name}</div>
+        <div class="contact-detail">${r.email || 'No email'} · ${r.phone || 'No phone'}</div>
+      </div>
+      <div class="contact-score">${r.score.total}%</div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);text-align:center;padding:20px;">No candidates</div>';
+}
+
+document.getElementById('contactFilter').addEventListener('change', renderContactList);
+document.getElementById('smsBody').addEventListener('input', function() {
+  document.getElementById('smsCount').textContent = `${this.value.length} / 160 chars`;
+});
+
+// ============================================================
+// CANDIDATE DETAIL MODAL
+// ============================================================
+function showCandidateDetail(idx) {
+  const r = state.results[idx];
+  state.currentModal = idx;
+  document.getElementById('modalCandName').textContent = r.name;
+  const allMatched = [...r.score.matched.must, ...r.score.matched.good, ...r.score.matched.bonus];
+  const scoreCls = r.score.total >= 70 ? 'score-high' : r.score.total >= 40 ? 'score-mid' : 'score-low';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="score-badge ${scoreCls}" style="width:70px;height:70px;font-size:1.2rem">${r.score.total}%</div>
+      <div>
+        <div style="font-size:0.8rem;color:var(--text3)">Match Score for ${state.jobTitle || 'Position'}</div>
+        <div class="progress-wrap mt-1" style="width:200px"><div class="progress-bar-fill" style="width:${r.score.total}%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:4px;">${r.score.rawScore} / ${r.score.maxScore} points · ${allMatched.length} keywords matched</div>
+      </div>
+      ${r.score.shortlisted ? '<span class="badge ms-auto" style="background:rgba(16,185,129,0.2);color:var(--accent3);padding:6px 12px;border-radius:20px;font-size:0.8rem">✓ SHORTLISTED</span>' : ''}
+    </div>
+    <div class="info-row">
+      <div class="info-chip"><i class="fas fa-user"></i> ${r.name}</div>
+      ${r.nic ? `<div class="info-chip"><i class="fas fa-id-card"></i> ${r.nic}</div>` : ''}
+      ${r.phone ? `<div class="info-chip"><i class="fas fa-phone"></i> ${r.phone}</div>` : ''}
+      ${r.email ? `<div class="info-chip"><i class="fas fa-envelope"></i> ${r.email}</div>` : ''}
+      ${r.education ? `<div class="info-chip"><i class="fas fa-graduation-cap"></i> ${r.education}</div>` : ''}
+      ${r.experience ? `<div class="info-chip"><i class="fas fa-briefcase"></i> ${r.experience}</div>` : ''}
+    </div>
+    <hr class="divider">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Must Have (${r.score.matched.must.length}/${state.keywords.must.length})</div>
+        ${state.keywords.must.map(k => `<span class="match-pill ${r.score.matched.must.includes(k) ? '' : 'miss'}" style="margin-bottom:4px;display:inline-block">${r.score.matched.must.includes(k) ? '✓' : '✗'} ${k}</span>`).join(' ') || '<span style="color:var(--text3);font-size:0.75rem">None defined</span>'}
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Good to Have (${r.score.matched.good.length}/${state.keywords.good.length})</div>
+        ${state.keywords.good.map(k => `<span class="match-pill ${r.score.matched.good.includes(k) ? '' : 'miss'}" style="margin-bottom:4px;display:inline-block">${r.score.matched.good.includes(k) ? '✓' : '✗'} ${k}</span>`).join(' ') || '<span style="color:var(--text3);font-size:0.75rem">None defined</span>'}
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Exclusions Flagged</div>
+        ${r.score.matched.exclude.length ? r.score.matched.exclude.map(k => `<span class="match-pill" style="background:rgba(239,68,68,0.1);color:var(--danger);border-color:rgba(239,68,68,0.2);margin-bottom:4px;display:inline-block">⚠ ${k}</span>`).join(' ') : '<span style="color:var(--text3);font-size:0.75rem">None flagged</span>'}
+      </div>
+    </div>
+    <hr class="divider">
+    <div>
+      <div style="font-size:0.75rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">CV Text Preview</div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:0.75rem;color:var(--text2);max-height:150px;overflow-y:auto;font-family:'Courier New',monospace;white-space:pre-wrap;">${(r.text || '').slice(0, 1000)}${r.text?.length > 1000 ? '...' : ''}</div>
+    </div>
+  `;
+  new bootstrap.Modal(document.getElementById('candidateModal')).show();
+}
+
+// ============================================================
+// EXPORT FUNCTIONS
+// ============================================================
+function getWorkbook(data, sheetName) {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  return wb;
+}
+
+function exportExcel() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const header = ['Rank','Name','NIC/ID','Email','Phone','Education','Experience','Score %','Shortlisted','Must Have Matched','Good to Have Matched','Bonus Matched','Missing Keywords','File Name'];
+  const rows = state.results.map((r, i) => [
+    i+1, r.name, r.nic||'', r.email||'', r.phone||'', r.education||'', r.experience||'',
+    r.score.total, r.score.shortlisted ? 'YES' : 'NO',
+    r.score.matched.must.join(', '), r.score.matched.good.join(', '),
+    r.score.matched.bonus.join(', '), r.score.matched.miss.join(', '), r.fileName
+  ]);
+  const wb = getWorkbook([header, ...rows], 'Full Ranking');
+  XLSX.writeFile(wb, `CV_Full_Ranking_${dateStr()}.xlsx`);
+  showToast('Full ranking report exported!', 'success');
+}
+
+function exportShortlistReport() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const shortlisted = state.results.filter(r => r.score.shortlisted);
+  if (!shortlisted.length) { showToast('No shortlisted candidates', 'error'); return; }
+  const header = ['Rank','Name','NIC/ID','Email','Phone','Education','Experience','Score %','Keywords Matched'];
+  const rows = shortlisted.map((r, i) => [
+    i+1, r.name, r.nic||'', r.email||'', r.phone||'', r.education||'', r.experience||'', r.score.total,
+    [...r.score.matched.must, ...r.score.matched.good, ...r.score.matched.bonus].join(', ')
+  ]);
+  const wb = getWorkbook([header, ...rows], 'Shortlist');
+  XLSX.writeFile(wb, `CV_Shortlist_${dateStr()}.xlsx`);
+  showToast('Shortlist report exported!', 'success');
+}
+
+function exportCSV() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const header = ['Rank','Name','NIC','Email','Phone','Education','Experience','Score','Shortlisted'];
+  const rows = state.results.map((r, i) => [i+1, r.name, r.nic, r.email, r.phone, r.education, r.experience, r.score.total+'%', r.score.shortlisted?'YES':'NO']);
+  const csv = [header, ...rows].map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadText(csv, `CV_Rankings_${dateStr()}.csv`, 'text/csv');
+  showToast('CSV exported!', 'success');
+}
+
+function exportEmailList() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const header = ['Rank','Name','Email','Phone','Score','Subject','Email Body'];
+  const subject = document.getElementById('emailSubject').value;
+  const body = document.getElementById('emailBody').value;
+  const rows = state.results.filter(r => r.score.shortlisted).map((r, i) => [
+    i+1, r.name, r.email||'', r.phone||'', r.score.total,
+    subject.replace('[Job Title]', state.jobTitle||'Position').replace('[Candidate Name]', r.name),
+    body.replace(/\[Candidate Name\]/g, r.name).replace(/\[Job Title\]/g, state.jobTitle||'Position')
+  ]);
+  const wb = getWorkbook([header, ...rows], 'Email List');
+  XLSX.writeFile(wb, `CV_Email_List_${dateStr()}.xlsx`);
+  showToast('Email list exported!', 'success');
+}
+
+function exportSMSList() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const header = ['Rank','Name','Phone','Score','SMS Message'];
+  const smsBody = document.getElementById('smsBody').value;
+  const rows = state.results.filter(r => r.score.shortlisted).map((r, i) => [
+    i+1, r.name, r.phone||'', r.score.total,
+    smsBody.replace(/\[Name\]/g, r.name).replace(/\[Job Title\]/g, state.jobTitle||'Position')
+  ]);
+  const wb = getWorkbook([header, ...rows], 'SMS List');
+  XLSX.writeFile(wb, `CV_SMS_List_${dateStr()}.xlsx`);
+  showToast('SMS list exported!', 'success');
+}
+
+function exportPerCandidateReport() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const wb = XLSX.utils.book_new();
+  state.results.slice(0, 20).forEach((r, i) => {
+    const data = [
+      ['CV Shortlist Pro — Individual Report'],
+      [''],
+      ['Candidate Name:', r.name],
+      ['NIC/ID:', r.nic||'N/A'],
+      ['Email:', r.email||'N/A'],
+      ['Phone:', r.phone||'N/A'],
+      ['Education:', r.education||'N/A'],
+      ['Experience:', r.experience||'N/A'],
+      ['File:', r.fileName],
+      [''],
+      ['SCORE SUMMARY'],
+      ['Total Score:', r.score.total+'%'],
+      ['Shortlisted:', r.score.shortlisted ? 'YES' : 'NO'],
+      [''],
+      ['KEYWORD ANALYSIS'],
+      ['Category', 'Keyword', 'Match'],
+      ...state.keywords.must.map(k => ['Must Have', k, r.score.matched.must.includes(k) ? '✓' : '✗']),
+      ...state.keywords.good.map(k => ['Good to Have', k, r.score.matched.good.includes(k) ? '✓' : '✗']),
+      ...state.keywords.bonus.map(k => ['Bonus', k, r.score.matched.bonus.includes(k) ? '✓' : '✗']),
+      ...state.keywords.exclude.map(k => ['Exclude', k, r.score.matched.exclude.includes(k) ? '⚠ FLAGGED' : 'OK']),
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, (r.name||'Cand').slice(0,28).replace(/[:/\\?*\[\]]/g,''));
+  });
+  XLSX.writeFile(wb, `CV_Per_Candidate_${dateStr()}.xlsx`);
+  showToast('Per-candidate report exported!', 'success');
+}
+
+function exportKeywordReport() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const allKw = [...state.keywords.must, ...state.keywords.good, ...state.keywords.bonus];
+  const header = ['Keyword', 'Category', 'Times Found', 'CVs Matched', 'Match Rate %'];
+  const rows = allKw.map(kw => {
+    const cat = state.keywords.must.includes(kw) ? 'Must Have' : state.keywords.good.includes(kw) ? 'Good to Have' : 'Bonus';
+    const matched = state.results.filter(r => {
+      const all = [...r.score.matched.must, ...r.score.matched.good, ...r.score.matched.bonus];
+      return all.includes(kw);
+    });
+    return [kw, cat, matched.length, matched.length, Math.round((matched.length/state.results.length)*100)];
+  }).sort((a,b) => b[2]-a[2]);
+  const wb = getWorkbook([header, ...rows], 'Keyword Frequency');
+  XLSX.writeFile(wb, `CV_Keywords_${dateStr()}.xlsx`);
+  showToast('Keyword report exported!', 'success');
+}
+
+function exportRejectedReport() {
+  if (!state.results.length) { showToast('No results to export', 'error'); return; }
+  const rejected = state.results.filter(r => !r.score.shortlisted);
+  if (!rejected.length) { showToast('All candidates are shortlisted!', 'success'); return; }
+  const header = ['Rank','Name','Score %','Missing Must-Have Keywords','Exclusions Flagged','File'];
+  const rows = rejected.map((r, i) => [
+    state.results.indexOf(r)+1, r.name, r.score.total,
+    r.score.matched.miss.join(', ') || 'None',
+    r.score.matched.exclude.join(', ') || 'None',
+    r.fileName
+  ]);
+  const wb = getWorkbook([header, ...rows], 'Not Shortlisted');
+  XLSX.writeFile(wb, `CV_Rejected_${dateStr()}.xlsx`);
+  showToast('Not-shortlisted report exported!', 'success');
+}
+
+function exportSingleCandidateById(idx) {
+  state.currentModal = idx;
+  exportSingleCandidate();
+}
+function exportSingleCandidate() {
+  const r = state.results[state.currentModal];
+  if (!r) return;
+  const data = [
+    ['CV Shortlist Pro — Candidate Report'],
+    ['Name:', r.name], ['NIC:', r.nic||''], ['Email:', r.email||''],
+    ['Phone:', r.phone||''], ['Education:', r.education||''], ['Experience:', r.experience||''],
+    ['Score:', r.score.total+'%'], ['Shortlisted:', r.score.shortlisted?'YES':'NO'], [''],
+    ['Must Have Matched:', r.score.matched.must.join(', ')],
+    ['Good to Have Matched:', r.score.matched.good.join(', ')],
+    ['Bonus Matched:', r.score.matched.bonus.join(', ')],
+    ['Missing:', r.score.matched.miss.join(', ')],
+    ['Exclusions:', r.score.matched.exclude.join(', ')],
+  ];
+  const wb = getWorkbook(data, 'Report');
+  XLSX.writeFile(wb, `CV_${r.name.replace(/\s+/g,'_')}_${dateStr()}.xlsx`);
+  showToast('Report exported!', 'success');
+}
+
+// ============================================================
+// EMAIL / SMS DRAFTS
+// ============================================================
+function generateEmailDraft() {
+  const selected = getSelectedContacts();
+  if (!selected.length) { showToast('No contacts selected', 'error'); return; }
+  showToast(`Email list ready for ${selected.length} candidates`, 'success');
+  exportEmailList();
+}
+function generateSMSDraft() {
+  const selected = getSelectedContacts();
+  if (!selected.length) { showToast('No contacts selected', 'error'); return; }
+  showToast(`SMS list ready for ${selected.length} candidates`, 'success');
+  exportSMSList();
+}
+function getSelectedContacts() {
+  return Array.from(document.querySelectorAll('.contact-cb:checked')).map(cb => state.results[cb.dataset.idx]).filter(Boolean);
+}
+function selectAllContacts() { document.querySelectorAll('.contact-cb').forEach(cb => cb.checked = true); }
+function deselectAllContacts() { document.querySelectorAll('.contact-cb').forEach(cb => cb.checked = false); }
+
+// ============================================================
+// UTILS
+// ============================================================
+function setProgress(pct) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+function addLog(type, msg) {
+  const log = document.getElementById('processLog');
+  const cls = { ok:'log-ok', err:'log-err', warn:'log-warn', info:'log-info' }[type] || '';
+  log.innerHTML += `<div class="log-line ${cls}">${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function dateStr() { return new Date().toISOString().slice(0,10).replace(/-/g,''); }
+function downloadText(content, filename, mime) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type: mime }));
+  a.download = filename; a.click();
+}
+function updateHeaderStats() {
+  document.getElementById('hstat-cvs').textContent = state.cvFiles.length;
+  const total = Object.values(state.keywords).flat().length + state.expKeywords.length + state.eduKeywords.length;
+  document.getElementById('hstat-kw').textContent = total;
+  document.getElementById('hstat-ranked').textContent = state.results.length;
+  const top = state.results[0]?.score.total;
+  document.getElementById('hstat-top').textContent = top != null ? top+'%' : '—';
+}
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+  const toast = document.createElement('div');
+  toast.className = `toast-item toast-${type==='error'?'error':type==='success'?'success':'info'}`;
+  toast.innerHTML = `<span class="toast-icon"><i class="fas ${icons[type]||icons.info}"></i></span><span class="toast-msg">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 3000);
+}
+
+// Pre-populate some helpful defaults
+window.addEventListener('DOMContentLoaded', () => {
+  // Default education keywords
+  ['BSc','MSc','MBA','PhD','Bachelor','Masters','Diploma'].forEach(e => {
+    if (!state.eduKeywords.includes(e.toLowerCase())) state.eduKeywords.push(e.toLowerCase());
+  });
+  renderKeywordTags();
+  updateHeaderStats();
+});
+</script>
+</body>
+</html>
